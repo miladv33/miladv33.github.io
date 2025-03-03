@@ -127,3 +127,76 @@ window.addEventListener('scroll', function () {
         scrollIndicator.style.pointerEvents = 'auto';
     }
 });
+
+
+// Add material design ripple effect to timeline bullet points
+document.addEventListener('DOMContentLoaded', function() {
+    const timelineItems = document.querySelectorAll('.timeline-list li');
+
+    timelineItems.forEach(item => {
+        // Add mouseenter event
+        item.addEventListener('mouseenter', function() {
+            // Add slight elevation with box shadow
+            this.style.textShadow = '0 1px 2px rgba(187, 134, 252, 0.3)';
+
+            // No longer changing opacity of other items
+            // We'll focus only on the hovered item
+        });
+
+        // Add mouseleave event
+        item.addEventListener('mouseleave', function() {
+            // Remove elevation
+            this.style.textShadow = 'none';
+
+            // No need to restore opacity since we're not changing it
+        });
+
+        // Add click effect for better interaction feedback
+        item.addEventListener('click', function(e) {
+            // Create and append ripple element
+            const ripple = document.createElement('span');
+            ripple.classList.add('timeline-ripple');
+
+            // Position the ripple where clicked
+            const rect = this.getBoundingClientRect();
+            const x = e.clientX - rect.left;
+            const y = e.clientY - rect.top;
+
+            ripple.style.left = `${x}px`;
+            ripple.style.top = `${y}px`;
+
+            this.appendChild(ripple);
+
+            // Remove ripple after animation completes
+            setTimeout(() => {
+                ripple.remove();
+            }, 600);
+        });
+    });
+});
+
+// Add these styles to your stylesheet or inline for the ripple effect
+document.head.insertAdjacentHTML('beforeend', `
+    <style>
+        .timeline-ripple {
+            position: absolute;
+            border-radius: 50%;
+            background-color: rgba(187, 134, 252, 0.3);
+            transform: scale(0);
+            animation: timelineRipple 0.6s linear;
+            pointer-events: none;
+        }
+        
+        @keyframes timelineRipple {
+            to {
+                transform: scale(4);
+                opacity: 0;
+            }
+        }
+        
+        .timeline-list li {
+            position: relative;
+            overflow: hidden;
+        }
+    </style>
+`);
