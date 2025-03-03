@@ -1025,3 +1025,104 @@ header:not([style*="translateY(-100%)"])::after {
 .nav-links.active {
     transform: translateY(0) !important;
 }
+
+/* Enhanced timeline dots with active state and progress */
+
+/* Update the timeline line to be a gradient for better visualization */
+.timeline::after {
+    content: '';
+    position: absolute;
+    width: 2px;
+    background-color: rgba(255, 255, 255, 0.12);
+    top: 0;
+    bottom: 0;
+    left: 50%;
+    margin-left: -1px;
+    z-index: 0; /* Ensure the line is behind the dots */
+}
+
+/* Add progress overlay on the timeline */
+.timeline::before {
+    content: '';
+    position: absolute;
+    width: 2px;
+    background-color: var(--md-primary);
+    top: 0;
+    left: 50%;
+    margin-left: -1px;
+    z-index: 1;
+    height: 0; /* Will be updated via JavaScript */
+    transition: height 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Updated styling for timeline dots */
+.timeline-dot {
+    position: absolute;
+    width: 16px;
+    height: 16px;
+    background-color: var(--md-primary);
+    border-radius: 50%;
+    top: calc(var(--md-spacing-unit) * 2);
+    z-index: 2; /* Above the line */
+    box-shadow: 0 0 0 4px rgba(187, 134, 252, 0.2);
+    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+    background-color 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+    box-shadow 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Active state for the dots when in view */
+.timeline-dot.active {
+    transform: scale(1.5);
+    background-color: var(--md-secondary);
+    box-shadow: 0 0 0 4px rgba(3, 218, 198, 0.3),
+    0 0 12px rgba(3, 218, 198, 0.5);
+}
+
+/* Past state for dots that have been scrolled past */
+.timeline-dot.past {
+    background-color: var(--md-primary-variant);
+}
+
+/* Adding pulse animation to active dot */
+@keyframes dotPulse {
+    0% {
+        box-shadow: 0 0 0 4px rgba(3, 218, 198, 0.3);
+    }
+    50% {
+        box-shadow: 0 0 0 8px rgba(3, 218, 198, 0.2);
+    }
+    100% {
+        box-shadow: 0 0 0 4px rgba(3, 218, 198, 0.3);
+    }
+}
+
+.timeline-dot.active {
+    animation: dotPulse 2s infinite;
+}
+
+/* Responsive adjustments */
+@media screen and (max-width: 900px) {
+    .timeline::before,
+    .timeline::after {
+        left: 31px;
+    }
+}
+
+/* Progress line will be added via JavaScript for better cross-browser support */
+.timeline-progress-line {
+    position: absolute;
+    width: 2px;
+    background-color: var(--md-primary);
+    top: 0;
+    left: 50%;
+    margin-left: -1px;
+    z-index: 1;
+    height: 0;
+    /* No transition here - we're handling animation with JavaScript for smoother control */
+}
+
+@media screen and (max-width: 900px) {
+    .timeline-progress-line {
+        left: 31px;
+    }
+}

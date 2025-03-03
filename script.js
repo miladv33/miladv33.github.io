@@ -272,3 +272,164 @@ document.addEventListener('DOMContentLoaded', function () {
 
     document.body.appendChild(topSensor);
 });
+
+
+// Timeline dots progress indicator functionality
+document.addEventListener('DOMContentLoaded', function() {
+    const timeline = document.querySelector('.timeline');
+    const timelineItems = document.querySelectorAll('.timeline-item');
+    const timelineDots = document.querySelectorAll('.timeline-dot');
+
+    if (!timeline || !timelineItems.length || !timelineDots.length) {
+        return; // Exit if timeline elements don't exist
+    }
+
+    // Function to update the timeline progress with smoothing
+    let lastScrollPercentage = 0; // Track the last percentage for smooth transitions
+    const smoothFactor = 0.1; // Lower value = smoother/slower transitions (0.1 = 10% movement toward target per frame)
+    let animationFrameId;
+
+    function updateTimelineProgress() {
+        const scrollPosition = window.scrollY || document.documentElement.scrollTop;
+        const windowHeight = window.innerHeight;
+
+        // Calculate the total height of the timeline
+        const timelineRect = timeline.getBoundingClientRect();
+        const timelineTop = timelineRect.top + scrollPosition;
+        const timelineHeight = timelineRect.height;
+
+        // Calculate target percentage (how far we've scrolled through the timeline)
+        let targetScrollPercentage = 0;
+
+        if (scrollPosition > timelineTop - windowHeight) {
+            // Start progress slightly before the timeline enters viewport
+            // and calculate percentage scrolled with offset for visibility
+            targetScrollPercentage = Math.min(
+                100,
+                Math.max(0, ((scrollPosition + windowHeight * 0.7) - timelineTop) / (timelineHeight + windowHeight * 0.3) * 100)
+            );
+        }
+
+        // Apply smoothing - move partway toward the target percentage
+        lastScrollPercentage = lastScrollPercentage + (targetScrollPercentage - lastScrollPercentage) * smoothFactor;
+
+        // Create or update progress line element
+        let progressLine = timeline.querySelector('.timeline-progress-line');
+
+        if (!progressLine) {
+            // Create the progress line element if it doesn't exist yet
+            progressLine = document.createElement('div');
+            progressLine.className = 'timeline-progress-line';
+            progressLine.style.position = 'absolute';
+            progressLine.style.width = '2px';
+            progressLine.style.backgroundColor = 'var(--md-primary)';
+            progressLine.style.top = '0';
+            progressLine.style.left = '50%';
+            progressLine.style.marginLeft = '-1px';
+            progressLine.style.zIndex = '1';
+            // Remove transition property - we're handling animation with JS
+
+            // For mobile view
+            const mediaQuery = window.matchMedia('(max-width: 900px)');
+            if (mediaQuery.matches) {
+                progressLine.style.left = '31px';
+            }
+
+            // Add to DOM
+            timeline.appendChild(progressLine);
+        }
+
+        // Update the height with the smoothed percentage
+        progressLine.style.height = `${lastScrollPercentage}%`;
+
+        // Continue smooth animation
+        animationFrameId = requestAnimationFrame(smoothUpdateDots);
+
+        // Update each timeline item's dot based on its position - with smoothing
+        function smoothUpdateDots() {
+            timelineItems.forEach((item, index) => {
+                const itemRect = item.getBoundingClientRect();
+                const dot = timelineDots[index];
+
+                // Calculate item's position relative to viewport
+                const itemMiddle = itemRect.top + itemRect.height / 2;
+                const itemPercentInView = 1 - Math.min(1, Math.max(0,
+                    Math.abs(itemMiddle - windowHeight * 0.5) / (windowHeight * 0.5)
+                ));
+
+                // Determine dot states with smooth transitions
+                if (itemPercentInView > 0.6) {  // Item is prominently in view
+                    // Add active class if not already there
+                    if (!dot.classList.contains('active')) {
+                        dot.classList.add('active');
+                    }
+                    dot.classList.remove('past');
+
+                    // Scale dot based on how centered the item is
+                    const scale = 1 + (itemPercentInView * 0.5); // Max 1.5x scale
+                    dot.style.transform = `scale(${scale})`;
+                }
+                else if (itemRect.bottom < windowHeight * 0.5) {
+                    // Item is above viewport center (scrolled past)
+                    dot.classList.remove('active');
+                    dot.classList.add('past');
+                    dot.style.transform = '';
+                }
+                else {
+                    // Item is below viewport center (not yet reached)
+                    dot.classList.remove('active');
+                    dot.classList.remove('past');
+                    dot.style.transform = '';
+                }
+            });
+        }
+    }
+
+    // Initial update
+    updateTimelineProgress();
+
+    // Use requestAnimationFrame for smoother animation
+    let isScrolling = false;
+
+    // Debounced scroll handler to minimize performance impact
+    window.addEventListener('scroll', function() {
+        isScrolling = true;
+
+        // Cancel previous animation frame if a new scroll event happens
+        if (animationFrameId) {
+            cancelAnimationFrame(animationFrameId);
+        }
+
+        // Trigger an immediate update then continue smooth animation
+        updateTimelineProgress();
+    });
+
+    // Keep animating for a short time after scrolling stops
+    function checkScrollingEnded() {
+        if (isScrolling) {
+            isScrolling = false;
+
+            // Continue animating for 500ms after scrolling stops
+            const continueAnimation = () => {
+                updateTimelineProgress();
+                setTimeout(() => {
+                    if (!isScrolling) {
+                        updateTimelineProgress();
+                    }
+                }, 500);
+            };
+
+            continueAnimation();
+        }
+    }
+
+    // Check if scrolling has ended every 100ms
+    setInterval(checkScrollingEnded, 100);
+
+    // Update on window resize
+    let resizeTimeout;
+    window.addEventListener('resize', function() {
+        clearTimeout(resizeTimeout);
+        resizeTimeout = setTimeout(updateTimelineProgress, 100);
+    });
+});
