@@ -275,7 +275,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
 
 // Timeline dots progress indicator functionality
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', function () {
     const timeline = document.querySelector('.timeline');
     const timelineItems = document.querySelectorAll('.timeline-item');
     const timelineDots = document.querySelectorAll('.timeline-dot');
@@ -368,14 +368,12 @@ document.addEventListener('DOMContentLoaded', function() {
                     // Scale dot based on how centered the item is
                     const scale = 1 + (itemPercentInView * 0.5); // Max 1.5x scale
                     dot.style.transform = `scale(${scale})`;
-                }
-                else if (itemRect.bottom < windowHeight * 0.5) {
+                } else if (itemRect.bottom < windowHeight * 0.5) {
                     // Item is above viewport center (scrolled past)
                     dot.classList.remove('active');
                     dot.classList.add('past');
                     dot.style.transform = '';
-                }
-                else {
+                } else {
                     // Item is below viewport center (not yet reached)
                     dot.classList.remove('active');
                     dot.classList.remove('past');
@@ -392,7 +390,7 @@ document.addEventListener('DOMContentLoaded', function() {
     let isScrolling = false;
 
     // Debounced scroll handler to minimize performance impact
-    window.addEventListener('scroll', function() {
+    window.addEventListener('scroll', function () {
         isScrolling = true;
 
         // Cancel previous animation frame if a new scroll event happens
@@ -428,8 +426,77 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Update on window resize
     let resizeTimeout;
-    window.addEventListener('resize', function() {
+    window.addEventListener('resize', function () {
         clearTimeout(resizeTimeout);
         resizeTimeout = setTimeout(updateTimelineProgress, 100);
+    });
+});
+
+
+// Script to automatically identify and bold specific keywords in timeline content
+document.addEventListener('DOMContentLoaded', function () {
+    // List of technical keywords to highlight based on your resume
+    const keywordsToHighlight = [
+        // Programming Languages & Core Technologies
+        'Kotlin', 'Java', 'Android SDK', 'Python', 'C\\+\\+', 'QML',
+
+        // Architecture & Design Patterns
+        'MVVM', 'Clean Architecture', 'MVI', 'SOLID',
+
+        // Android Specific
+        'Jetpack Compose', 'Coroutines', 'Flows', 'RxJava',
+        'Dagger Hilt', 'Room', 'SQLite', 'Retrofit', 'Glide',
+
+        // Testing
+        'JUnit', 'Mockito', 'MockK', 'Robolectric',
+
+        // Process & Tools
+        'CI\\/CD', 'Git', 'GitHub', 'pull requests', 'build variant', 'app signing',
+
+        // Project Specific
+        'server-driven UI', 'pixel-perfect', 'memory optimization',
+        'feature flags', 'collaborating',
+
+        // Other Technical Terms
+        'payments', 'terabyte', 'secure client-server architecture'
+    ];
+
+    // Create regex pattern with word boundaries to match whole words only
+    const pattern = new RegExp('\\b(' + keywordsToHighlight.join('|') + ')\\b', 'gi');
+
+    // Target elements that contain technical content
+    const contentElements = document.querySelectorAll('.timeline-list li, .project-description');
+
+    contentElements.forEach(element => {
+        // Store the original text
+        const originalText = element.innerHTML;
+
+        // Replace keywords with bold version, preserving any existing HTML
+        const newText = originalText.replace(pattern, '<strong>$1</strong>');
+
+        // Only update if changes were made
+        if (newText !== originalText) {
+            element.innerHTML = newText;
+        }
+    });
+
+    // Add hover effect to timeline items
+    const timelineItems = document.querySelectorAll('.timeline-item');
+    timelineItems.forEach(item => {
+        item.addEventListener('mouseenter', function () {
+            // Make keywords more prominent on hover
+            const boldElements = this.querySelectorAll('strong');
+            boldElements.forEach(el => {
+                el.style.color = 'var(--md-secondary)';
+            });
+        });
+
+        item.addEventListener('mouseleave', function () {
+            // Reset color
+            const boldElements = this.querySelectorAll('strong');
+            boldElements.forEach(el => {
+                el.style.color = 'var(--md-primary)';
+            });
+        });
     });
 });

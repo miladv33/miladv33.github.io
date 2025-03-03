@@ -1126,3 +1126,42 @@ header:not([style*="translateY(-100%)"])::after {
         left: 31px;
     }
 }
+
+/* Enhanced styling for bold keywords in timeline content */
+
+/* Target specific keywords in timeline list items to make them bold */
+.timeline-list li strong,
+.project-description strong {
+    font-weight: 700;
+    color: var(--md-primary);
+    position: relative;
+    display: inline-block;
+}
+
+/* Add subtle underline effect for bold keywords */
+.timeline-list li strong::after,
+.project-description strong::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    bottom: -2px;
+    width: 100%;
+    height: 1px;
+    background-color: var(--md-primary);
+    opacity: 0.3;
+    transform: scaleX(0.8);
+    transition: transform 0.2s ease, opacity 0.2s ease;
+}
+
+/* Enhance effect on hover */
+.timeline-list li:hover strong::after,
+.project-description:hover strong::after {
+    opacity: 0.7;
+    transform: scaleX(1);
+}
+
+/* Make technical terms stand out on highlight */
+.timeline-list li:hover strong,
+.project-description:hover strong {
+    text-shadow: 0 0 1px rgba(187, 134, 252, 0.3);
+}
