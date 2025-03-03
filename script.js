@@ -130,12 +130,12 @@ window.addEventListener('scroll', function () {
 
 
 // Add material design ripple effect to timeline bullet points
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', function () {
     const timelineItems = document.querySelectorAll('.timeline-list li');
 
     timelineItems.forEach(item => {
         // Add mouseenter event
-        item.addEventListener('mouseenter', function() {
+        item.addEventListener('mouseenter', function () {
             // Add slight elevation with box shadow
             this.style.textShadow = '0 1px 2px rgba(187, 134, 252, 0.3)';
 
@@ -144,7 +144,7 @@ document.addEventListener('DOMContentLoaded', function() {
         });
 
         // Add mouseleave event
-        item.addEventListener('mouseleave', function() {
+        item.addEventListener('mouseleave', function () {
             // Remove elevation
             this.style.textShadow = 'none';
 
@@ -152,7 +152,7 @@ document.addEventListener('DOMContentLoaded', function() {
         });
 
         // Add click effect for better interaction feedback
-        item.addEventListener('click', function(e) {
+        item.addEventListener('click', function (e) {
             // Create and append ripple element
             const ripple = document.createElement('span');
             ripple.classList.add('timeline-ripple');
@@ -200,3 +200,75 @@ document.head.insertAdjacentHTML('beforeend', `
         }
     </style>
 `);
+
+
+// Smart Header - Hide on scroll down, show on scroll up
+document.addEventListener('DOMContentLoaded', function () {
+    const header = document.querySelector('header');
+    let lastScrollTop = 0;
+    let scrollThreshold = 10; // Minimum scroll amount before triggering header visibility change
+
+    // Add necessary CSS for smooth transitions
+    header.style.transition = 'transform 0.3s ease, box-shadow 0.3s ease';
+
+    // First, let's create a wrapper function to handle the scroll
+    function handleHeaderVisibility() {
+        let currentScrollTop = window.scrollY || document.documentElement.scrollTop;
+
+        // Don't hide header at the very top of the page
+        if (currentScrollTop <= 0) {
+            header.style.transform = 'translateY(0)';
+            header.style.boxShadow = 'var(--md-elevation-2)';
+            lastScrollTop = 0;
+            return;
+        }
+
+        // Determine scroll direction and meet threshold
+        if (Math.abs(lastScrollTop - currentScrollTop) <= scrollThreshold) {
+            return; // Not enough scrolling to trigger an action
+        }
+
+        // Scrolling down
+        if (currentScrollTop > lastScrollTop) {
+            header.style.transform = 'translateY(-100%)'; // Hide header
+        }
+        // Scrolling up
+        else {
+            header.style.transform = 'translateY(0)'; // Show header
+            header.style.boxShadow = 'var(--md-elevation-3)'; // Add slightly stronger shadow when reappearing
+        }
+
+        lastScrollTop = currentScrollTop;
+    }
+
+    // Setup the scroll event with throttling for better performance
+    let scrollTimeout;
+
+    window.addEventListener('scroll', function () {
+        if (!scrollTimeout) {
+            scrollTimeout = setTimeout(function () {
+                handleHeaderVisibility();
+                scrollTimeout = null;
+            }, 10); // Small throttle to improve performance
+        }
+    });
+
+    // Show header when user hovers near the top of the screen
+    // This improves UX by making the header easier to access
+    const topSensor = document.createElement('div');
+    topSensor.style.position = 'fixed';
+    topSensor.style.top = '0';
+    topSensor.style.left = '0';
+    topSensor.style.width = '100%';
+    topSensor.style.height = '20px';
+    topSensor.style.zIndex = '99';
+    topSensor.style.pointerEvents = 'none'; // Don't interfere with other interactions
+
+    topSensor.addEventListener('mouseenter', function () {
+        if (window.scrollY > 50) { // Only trigger if we've scrolled down a bit
+            header.style.transform = 'translateY(0)';
+        }
+    });
+
+    document.body.appendChild(topSensor);
+});

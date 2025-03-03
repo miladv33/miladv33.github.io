@@ -975,3 +975,53 @@ footer {
 :root {
     --md-primary-transparent: rgba(187, 134, 252, 0.08);
 }
+
+
+/* Enhanced header styles for smart scrolling behavior */
+header {
+    background-color: var(--md-surface);
+    padding: var(--md-spacing-unit);
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 100;
+    box-shadow: var(--md-elevation-2);
+    /* These properties ensure smooth animation */
+    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+    box-shadow 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    /* Slight performance improvement */
+    will-change: transform;
+}
+
+/* Space at the top to compensate for the fixed header */
+body {
+    padding-top: 56px; /* Adjust this value to match your header height */
+}
+
+/* Creating a subtle top border effect when header reappears */
+header::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 2px;
+    background: linear-gradient(to right, var(--md-primary), var(--md-secondary));
+    opacity: 0;
+    transition: opacity 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Show the gradient border when header reappears */
+header:not([style*="translateY(-100%)"]) {
+    transform: translateY(0);
+}
+
+header:not([style*="translateY(-100%)"])::after {
+    opacity: 1;
+}
+
+/* Ensure mobile menu stays below the header when open */
+.nav-links.active {
+    transform: translateY(0) !important;
+}
