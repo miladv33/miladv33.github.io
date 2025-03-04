@@ -1003,3 +1003,76 @@ document.addEventListener('DOMContentLoaded', function() {
     </style>
   `);
 });
+
+// Add this to your script.js file
+document.addEventListener('DOMContentLoaded', function() {
+  // Create progress container
+  const progressContainer = document.createElement('div');
+  progressContainer.classList.add('scroll-progress-container');
+
+  // Create progress bar
+  const progressBar = document.createElement('div');
+  progressBar.classList.add('scroll-progress-bar');
+
+  // Append to DOM
+  progressContainer.appendChild(progressBar);
+  document.body.appendChild(progressContainer);
+
+  // Update progress on scroll
+  window.addEventListener('scroll', function() {
+    const windowHeight = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+    const scrollPosition = window.scrollY;
+    const scrollPercentage = (scrollPosition / windowHeight) * 100;
+
+    progressBar.style.width = `${scrollPercentage}%`;
+
+    // Add pulsing effect at milestones
+    if (scrollPercentage >= 25 && scrollPercentage < 26 ||
+        scrollPercentage >= 50 && scrollPercentage < 51 ||
+        scrollPercentage >= 75 && scrollPercentage < 76 ||
+        scrollPercentage >= 99 && scrollPercentage <= 100) {
+      progressBar.classList.add('progress-milestone');
+
+      setTimeout(() => {
+        progressBar.classList.remove('progress-milestone');
+      }, 1000);
+    }
+  });
+
+  // Add styles
+  document.head.insertAdjacentHTML('beforeend', `
+    <style>
+      .scroll-progress-container {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 3px;
+        background-color: rgba(255, 255, 255, 0.1);
+        z-index: 1000;
+      }
+      
+      .scroll-progress-bar {
+        height: 100%;
+        width: 0;
+        background: linear-gradient(to right, var(--md-primary), var(--md-secondary));
+        transition: width 0.1s ease;
+      }
+      
+      .progress-milestone {
+        animation: progress-pulse 1s ease;
+      }
+      
+      @keyframes progress-pulse {
+        0%, 100% {
+          opacity: 1;
+          height: 3px;
+        }
+        50% {
+          opacity: 0.7;
+          height: 5px;
+        }
+      }
+    </style>
+  `);
+});
