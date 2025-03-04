@@ -735,3 +735,77 @@ document.addEventListener('DOMContentLoaded', function() {
     });
   });
 });
+
+// Add this to your script.js file
+document.addEventListener('DOMContentLoaded', function() {
+  const timelineItems = document.querySelectorAll('.timeline-item');
+
+  // Set initial state
+  timelineItems.forEach(item => {
+    const isLeft = !item.style.left || item.style.left === '0px';
+    const transform = isLeft ? 'translateX(-50px)' : 'translateX(50px)';
+
+    item.style.opacity = '0';
+    item.style.transform = transform;
+    item.style.transition = 'opacity 0.5s ease, transform 0.5s ease';
+  });
+
+  // Function to check if element is in viewport
+  function isInViewport(element) {
+    const rect = element.getBoundingClientRect();
+    const offset = 150; // Start animation a bit earlier
+    return (
+      rect.top <= (window.innerHeight - offset || document.documentElement.clientHeight - offset) &&
+      rect.bottom >= offset
+    );
+  }
+
+  // Function to animate timeline items
+  function animateTimeline() {
+    timelineItems.forEach(item => {
+      if (isInViewport(item) && item.style.opacity === '0') {
+        // Animate in
+        setTimeout(() => {
+          item.style.opacity = '1';
+          item.style.transform = 'translateX(0)';
+
+          // Add highlight flash to the timeline dot
+          const dot = item.querySelector('.timeline-dot');
+          if (dot) {
+            dot.classList.add('timeline-dot-flash');
+            setTimeout(() => {
+              dot.classList.remove('timeline-dot-flash');
+            }, 1000);
+          }
+        }, 200 * Array.from(timelineItems).indexOf(item)); // Sequential delay
+      }
+    });
+  }
+
+  // Add highlight effect style
+  document.head.insertAdjacentHTML('beforeend', `
+    <style>
+      .timeline-dot-flash {
+        animation: dot-flash 1s ease-out;
+      }
+      
+      @keyframes dot-flash {
+        0% {
+          box-shadow: 0 0 0 0 rgba(187, 134, 252, 0.7);
+        }
+        70% {
+          box-shadow: 0 0 0 15px rgba(187, 134, 252, 0);
+        }
+        100% {
+          box-shadow: 0 0 0 0 rgba(187, 134, 252, 0);
+        }
+      }
+    </style>
+  `);
+
+  // Check on initial load
+  setTimeout(animateTimeline, 500);
+
+  // Check on scroll
+  window.addEventListener('scroll', animateTimeline);
+});
