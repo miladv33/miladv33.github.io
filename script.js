@@ -540,3 +540,157 @@ document.addEventListener('DOMContentLoaded', function() {
   animateSkills();
   window.addEventListener('scroll', animateSkills);
 });
+
+// Add this to your script.js file
+document.addEventListener('DOMContentLoaded', function() {
+  // Create the FAB container
+  const fabContainer = document.createElement('div');
+  fabContainer.classList.add('fab-container');
+
+  // Create main FAB button
+  const mainFab = document.createElement('button');
+  mainFab.classList.add('fab-button', 'main-fab');
+  mainFab.innerHTML = '<span class="material-icons">add</span>';
+
+  // Create mini FABs
+  const miniFabs = [
+    {
+      icon: 'email',
+      label: 'Email Me',
+      action: () => { window.location.href = 'mailto:Miladv33@gmail.com'; }
+    },
+    {
+      icon: 'code',
+      label: 'View GitHub',
+      action: () => { window.open('https://github.com/miladv33', '_blank'); }
+    },
+    {
+      icon: 'article',
+      label: 'Read Articles',
+      action: () => { document.getElementById('articles').scrollIntoView({behavior: 'smooth'}); }
+    }
+  ];
+
+  // Create a wrapper for mini FABs
+  const miniFabsWrapper = document.createElement('div');
+  miniFabsWrapper.classList.add('mini-fabs-wrapper');
+
+  // Add mini FABs to wrapper
+  miniFabs.forEach(fab => {
+    const miniFab = document.createElement('button');
+    miniFab.classList.add('fab-button', 'mini-fab');
+    miniFab.innerHTML = `<span class="material-icons">${fab.icon}</span>`;
+    miniFab.setAttribute('data-label', fab.label);
+    miniFab.addEventListener('click', fab.action);
+    miniFabsWrapper.appendChild(miniFab);
+  });
+
+  // Add components to DOM
+  fabContainer.appendChild(miniFabsWrapper);
+  fabContainer.appendChild(mainFab);
+  document.body.appendChild(fabContainer);
+
+  // Toggle FAB menu
+  mainFab.addEventListener('click', function() {
+    fabContainer.classList.toggle('active');
+
+    // Rotate main FAB button
+    this.style.transform = fabContainer.classList.contains('active')
+      ? 'rotate(45deg)'
+      : 'rotate(0)';
+  });
+
+  // Add styles
+  document.head.insertAdjacentHTML('beforeend', `
+    <style>
+      .fab-container {
+        position: fixed;
+        bottom: 30px;
+        right: 30px;
+        z-index: 999;
+      }
+      
+      .fab-button {
+        width: 56px;
+        height: 56px;
+        border-radius: 50%;
+        border: none;
+        color: var(--md-on-primary);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        box-shadow: var(--md-elevation-3);
+        cursor: pointer;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      }
+      
+      .main-fab {
+        background-color: var(--md-primary);
+        z-index: 2;
+        position: relative;
+      }
+      
+      .main-fab:hover {
+        transform: scale(1.1);
+      }
+      
+      .mini-fabs-wrapper {
+        position: absolute;
+        bottom: 0;
+        right: 0;
+        height: 56px;
+        width: 56px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        z-index: 1;
+      }
+      
+      .mini-fab {
+        background-color: var(--md-secondary);
+        position: absolute;
+        bottom: 0;
+        visibility: hidden;
+        opacity: 0;
+        font-size: 24px;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      }
+      
+      .mini-fab::before {
+        content: attr(data-label);
+        position: absolute;
+        right: 64px;
+        padding: 5px 10px;
+        background-color: var(--md-surface);
+        color: var(--md-on-surface);
+        border-radius: 4px;
+        font-size: 12px;
+        white-space: nowrap;
+        opacity: 0;
+        transition: opacity 0.2s ease;
+        box-shadow: var(--md-elevation-1);
+      }
+      
+      .mini-fab:hover::before {
+        opacity: 1;
+      }
+      
+      .fab-container.active .mini-fab {
+        visibility: visible;
+        opacity: 1;
+      }
+      
+      .fab-container.active .mini-fab:nth-child(1) {
+        transform: translateY(-65px);
+      }
+      
+      .fab-container.active .mini-fab:nth-child(2) {
+        transform: translateY(-130px);
+      }
+      
+      .fab-container.active .mini-fab:nth-child(3) {
+        transform: translateY(-195px);
+      }
+    </style>
+  `);
+});
