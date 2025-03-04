@@ -500,3 +500,43 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     });
 });
+
+// Add this to your script.js file
+document.addEventListener('DOMContentLoaded', function() {
+  const skillChips = document.querySelectorAll('.skill-chip');
+
+  // Set initial state - all invisible
+  skillChips.forEach(chip => {
+    chip.style.opacity = '0';
+    chip.style.transform = 'translateY(20px)';
+    chip.style.transition = 'opacity 0.3s ease, transform 0.3s ease';
+  });
+
+  // Function to check if element is in viewport
+  function isInViewport(element) {
+    const rect = element.getBoundingClientRect();
+    return (
+      rect.top <= (window.innerHeight || document.documentElement.clientHeight) &&
+      rect.bottom >= 0
+    );
+  }
+
+  // Function to animate skills when in viewport
+  function animateSkills() {
+    if (!isInViewport(document.querySelector('.skill-chips'))) return;
+
+    skillChips.forEach((chip, index) => {
+      setTimeout(() => {
+        chip.style.opacity = '1';
+        chip.style.transform = 'translateY(0)';
+      }, 50 * index); // Stagger each item by 50ms
+    });
+
+    // Remove scroll listener once animation is triggered
+    window.removeEventListener('scroll', animateSkills);
+  }
+
+  // Check on initial load and then on scroll
+  animateSkills();
+  window.addEventListener('scroll', animateSkills);
+});
