@@ -900,3 +900,106 @@ document.addEventListener('DOMContentLoaded', function() {
     </style>
   `);
 });
+
+// Add this to your script.js file
+document.addEventListener('DOMContentLoaded', function() {
+  // First, modify your HTML to add a typing container
+  const heroSubtitle = document.querySelector('.hero-subtitle');
+
+  if (heroSubtitle) {
+    // Save original text
+    const originalText = heroSubtitle.innerHTML;
+
+    // Create typed text element
+    const typedTextEl = document.createElement('div');
+    typedTextEl.classList.add('typed-text');
+
+    // Insert after the hero subtitle
+    heroSubtitle.insertAdjacentElement('afterend', typedTextEl);
+
+    // Define typing text phrases
+    const phrases = [
+      "Building innovative Android apps",
+      "Specializing in Kotlin and MVVM",
+      "Implementing Clean Architecture",
+      "Creating seamless user experiences",
+      "Developing with Jetpack Compose"
+    ];
+
+    // Initialize variables
+    let phraseIndex = 0;
+    let charIndex = 0;
+    let isDeleting = false;
+    let isWaiting = false;
+
+    // Function to type text
+    function typeText() {
+      // Current phrase to work with
+      const currentPhrase = phrases[phraseIndex];
+
+      // Speed control based on state
+      const typingSpeed = isDeleting ? 30 : 80;
+
+      if (!isWaiting) {
+        // If typing
+        if (!isDeleting && charIndex <= currentPhrase.length) {
+          typedTextEl.innerHTML = `<span class="primary-text">${currentPhrase.substring(0, charIndex)}</span><span class="cursor">|</span>`;
+          charIndex++;
+
+          // Start deleting after full phrase is typed with a pause
+          if (charIndex > currentPhrase.length) {
+            isWaiting = true;
+            setTimeout(() => {
+              isWaiting = false;
+              isDeleting = true;
+            }, 1500);
+          }
+        }
+        // If deleting
+        else if (isDeleting && charIndex >= 0) {
+          typedTextEl.innerHTML = `<span class="primary-text">${currentPhrase.substring(0, charIndex)}</span><span class="cursor">|</span>`;
+          charIndex--;
+
+          // Move to next phrase after fully deleted
+          if (charIndex === 0) {
+            isDeleting = false;
+            phraseIndex = (phraseIndex + 1) % phrases.length;
+          }
+        }
+      }
+
+      // Call function again after delay
+      setTimeout(typeText, typingSpeed);
+    }
+
+    // Start the typing animation
+    typeText();
+  }
+
+  // Add necessary styles
+  document.head.insertAdjacentHTML('beforeend', `
+    <style>
+      .typed-text {
+        min-height: 28px;
+        margin-bottom: calc(var(--md-spacing-unit) * 4);
+        color: var(--md-secondary);
+      }
+      
+      .primary-text {
+        color: var(--md-secondary);
+        font-weight: 500;
+      }
+      
+      .cursor {
+        color: var(--md-primary);
+        font-weight: bold;
+        animation: cursor-blink 1s infinite;
+      }
+      
+      @keyframes cursor-blink {
+        0%, 100% { opacity: 1; }
+        50% { opacity: 0; }
+      }
+    </style>
+  `);
+});
