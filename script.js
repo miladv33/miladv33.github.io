@@ -809,3 +809,94 @@ document.addEventListener('DOMContentLoaded', function() {
   // Check on scroll
   window.addEventListener('scroll', animateTimeline);
 });
+
+// Add this to your script.js file
+document.addEventListener('DOMContentLoaded', function() {
+  const projectCards = document.querySelectorAll('.project-card');
+
+  projectCards.forEach(card => {
+    // Create gradient overlay for hover effect
+    const overlay = document.createElement('div');
+    overlay.classList.add('project-card-overlay');
+    card.appendChild(overlay);
+
+    // Add morph animation on hover
+    card.addEventListener('mouseenter', function() {
+      this.classList.add('project-card-hover');
+
+      // Animate project tech items
+      const techItems = this.querySelectorAll('.project-tech-item');
+      techItems.forEach((item, index) => {
+        item.style.transitionDelay = `${index * 50}ms`;
+        item.classList.add('project-tech-item-hover');
+      });
+    });
+
+    card.addEventListener('mouseleave', function() {
+      this.classList.remove('project-card-hover');
+
+      // Reset tech items
+      const techItems = this.querySelectorAll('.project-tech-item');
+      techItems.forEach(item => {
+        item.classList.remove('project-tech-item-hover');
+        // Remove delay on leave to avoid staggered fade out
+        item.style.transitionDelay = '0ms';
+      });
+    });
+  });
+
+  // Add necessary styles
+  document.head.insertAdjacentHTML('beforeend', `
+    <style>
+      .project-card {
+        position: relative;
+        overflow: hidden;
+        transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), 
+                    box-shadow 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      }
+      
+      .project-card-overlay {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(135deg, var(--md-primary-transparent), rgba(3, 218, 198, 0.05));
+        opacity: 0;
+        transition: opacity 0.3s ease;
+        z-index: 1;
+        pointer-events: none;
+      }
+      
+      .project-card-hover {
+        transform: translateY(-8px) scale(1.02);
+        box-shadow: var(--md-elevation-4);
+      }
+      
+      .project-card-hover .project-card-overlay {
+        opacity: 0.1;
+      }
+      
+      .project-card-hover .project-header {
+        transform: scale(1.05);
+      }
+      
+      .project-header {
+        transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        transform-origin: center;
+      }
+      
+      .project-tech-item {
+        transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+                    background-color 0.3s ease,
+                    color 0.3s ease;
+      }
+      
+      .project-tech-item-hover {
+        transform: translateY(-3px);
+        background-color: var(--md-secondary);
+        color: var(--md-on-secondary);
+      }
+    </style>
+  `);
+});
