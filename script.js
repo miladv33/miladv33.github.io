@@ -694,3 +694,44 @@ document.addEventListener('DOMContentLoaded', function() {
     </style>
   `);
 });
+
+// Add this to your script.js file
+document.addEventListener('DOMContentLoaded', function() {
+  const hero = document.querySelector('.hero');
+  const androidItems = document.querySelectorAll('.android-item, .code-particle');
+  const heroContent = document.querySelector('.hero-content');
+
+  // Add perspective to hero
+  hero.style.perspective = '1000px';
+  hero.style.perspectiveOrigin = 'center';
+
+  // Base transform for hero content
+  heroContent.style.transform = 'translateZ(0)';
+  heroContent.style.transition = 'transform 0.2s ease-out';
+
+  // Initial parallax depth for each item
+  androidItems.forEach(item => {
+    // Generate random depth
+    const depth = Math.random() * 200;
+    item.style.transform += ` translateZ(${-depth}px)`;
+    item.dataset.depth = depth;
+  });
+
+  // Handle scroll parallax
+  window.addEventListener('scroll', function() {
+    const scrollY = window.scrollY;
+    if (scrollY > hero.offsetHeight) return; // Stop when out of view
+
+    // Move hero content based on scroll
+    const contentMove = scrollY * 0.15;
+    heroContent.style.transform = `translateZ(0) translateY(${contentMove}px)`;
+
+    // Move each android item based on its depth
+    androidItems.forEach(item => {
+      const depth = parseFloat(item.dataset.depth);
+      const itemMove = scrollY * (depth / 1000);
+      const currentTransform = item.style.transform.split(' translateZ')[0];
+      item.style.transform = `${currentTransform} translateZ(${-depth}px) translateY(${itemMove}px)`;
+    });
+  });
+});
