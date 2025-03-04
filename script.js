@@ -1248,3 +1248,41 @@ document.addEventListener('DOMContentLoaded', function() {
     ParticleNetwork.init();
   }
 });
+
+// Add this to your script.js file
+document.addEventListener('DOMContentLoaded', function() {
+  const cards = document.querySelectorAll('.md-card, .project-card, .contact-card');
+
+  // Set initial state
+  cards.forEach(card => {
+    card.style.opacity = '0';
+    card.style.transform = 'translateY(20px)';
+    card.style.transition = 'opacity 0.4s ease, transform 0.4s ease';
+  });
+
+  // Function to check if element is in viewport with offset
+  function isInViewport(element, offset = 0) {
+    const rect = element.getBoundingClientRect();
+    return (
+      rect.top <= (window.innerHeight - offset) &&
+      rect.bottom >= offset
+    );
+  }
+
+  // Function to animate elements when they come into view
+  function animateOnScroll() {
+    cards.forEach((card, index) => {
+      if (isInViewport(card, 50) && card.style.opacity === '0') {
+        // Stagger animation based on index
+        setTimeout(() => {
+          card.style.opacity = '1';
+          card.style.transform = 'translateY(0)';
+        }, 100 * (index % 3)); // Stagger by row
+      }
+    });
+  }
+
+  // Run on load and scroll
+  animateOnScroll();
+  window.addEventListener('scroll', animateOnScroll);
+});
