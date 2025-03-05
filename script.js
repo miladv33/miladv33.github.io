@@ -1,3 +1,328 @@
+// Add this to the top of your script.js file to ensure Material Icons are properly loaded
+
+document.addEventListener('DOMContentLoaded', function () {
+    // Create a hidden div to preload Material Icons font
+    const preloadDiv = document.createElement('div');
+    preloadDiv.className = 'icon-preloader';
+    preloadDiv.style.opacity = '0';
+    preloadDiv.style.position = 'absolute';
+    preloadDiv.style.top = '-9999px';
+    preloadDiv.style.left = '-9999px';
+    preloadDiv.style.pointerEvents = 'none';
+
+    // Add a few Material Icons to force font loading
+    preloadDiv.innerHTML = `
+    <span class="material-icons">android</span>
+    <span class="material-icons">phone_android</span>
+    <span class="material-icons">developer_mode</span>
+    <span class="material-icons">code</span>
+    <span class="material-icons">email</span>
+    <span class="material-icons">article</span>
+    <span class="material-icons">keyboard_arrow_down</span>
+  `;
+
+    document.body.appendChild(preloadDiv);
+
+    // Prevent showing default content until icons are loaded
+    const iconElements = document.querySelectorAll('.material-icons');
+    iconElements.forEach(icon => {
+        // Save original text
+        const originalText = icon.textContent;
+
+        // Make icon invisible until loaded
+        icon.style.visibility = 'hidden';
+
+        // Create a font loading observer
+        const observer = new FontFaceObserver('Material Icons');
+
+        observer.load().then(() => {
+            // Font is loaded, make icon visible
+            icon.style.visibility = 'visible';
+        }).catch(() => {
+            // Fallback if font fails to load after 3 seconds
+            setTimeout(() => {
+                icon.style.visibility = 'visible';
+            }, 3000);
+        });
+    });
+});
+
+// Add FontFaceObserver library (minified)
+(function () {
+    function l(a, b) {
+        document.addEventListener ? a.addEventListener("scroll", b, !1) : a.attachEvent("scroll", b)
+    }
+
+    function m(a) {
+        document.body ? a() : document.addEventListener ? document.addEventListener("DOMContentLoaded", function c() {
+            document.removeEventListener("DOMContentLoaded", c);
+            a()
+        }) : document.attachEvent("onreadystatechange", function k() {
+            if ("interactive" == document.readyState || "complete" == document.readyState) document.detachEvent("onreadystatechange", k), a()
+        })
+    };
+
+    function t(a) {
+        this.a = document.createElement("div");
+        this.a.setAttribute("aria-hidden", "true");
+        this.a.appendChild(document.createTextNode(a));
+        this.b = document.createElement("span");
+        this.c = document.createElement("span");
+        this.h = document.createElement("span");
+        this.f = document.createElement("span");
+        this.g = -1;
+        this.b.style.cssText = "max-width:none;display:inline-block;position:absolute;height:100%;width:100%;overflow:scroll;font-size:16px;";
+        this.c.style.cssText = "max-width:none;display:inline-block;position:absolute;height:100%;width:100%;overflow:scroll;font-size:16px;";
+        this.f.style.cssText = "max-width:none;display:inline-block;position:absolute;height:100%;width:100%;overflow:scroll;font-size:16px;";
+        this.h.style.cssText = "display:inline-block;width:200%;height:200%;font-size:16px;max-width:none;";
+        this.b.appendChild(this.h);
+        this.c.appendChild(this.f);
+        this.a.appendChild(this.b);
+        this.a.appendChild(this.c)
+    }
+
+    function u(a, b) {
+        a.a.style.cssText = "max-width:none;min-width:20px;min-height:20px;display:inline-block;overflow:hidden;position:absolute;width:auto;margin:0;padding:0;top:-999px;white-space:nowrap;font-synthesis:none;font:" + b + ";"
+    }
+
+    function z(a) {
+        var b = a.a.offsetWidth, c = b + 100;
+        a.f.style.width = c + "px";
+        a.c.scrollLeft = c;
+        a.b.scrollLeft = a.b.scrollWidth + 100;
+        return a.g !== b ? (a.g = b, !0) : !1
+    }
+
+    function A(a, b) {
+        function c() {
+            var a = k;
+            z(a) && a.a.parentNode && b(a.g)
+        }
+
+        var k = a;
+        l(a.b, c);
+        l(a.c, c);
+        z(a)
+    };
+
+    function B(a, b) {
+        var c = b || {};
+        this.family = a;
+        this.style = c.style || "normal";
+        this.weight = c.weight || "normal";
+        this.stretch = c.stretch || "normal"
+    }
+
+    var C = null, D = null, E = null, F = null;
+
+    function G() {
+        if (null === D) if (J() && /Apple/.test(window.navigator.vendor)) {
+            var a = /AppleWebKit\/([0-9]+)(?:\.([0-9]+))(?:\.([0-9]+))/.exec(window.navigator.userAgent);
+            D = !!a && 603 > parseInt(a[1], 10)
+        } else D = !1;
+        return D
+    }
+
+    function J() {
+        null === F && (F = !!document.fonts);
+        return F
+    }
+
+    function K() {
+        if (null === E) {
+            var a = document.createElement("div");
+            try {
+                a.style.font = "condensed 100px sans-serif"
+            } catch (b) {
+            }
+            E = "" !== a.style.font
+        }
+        return E
+    }
+
+    function L(a, b) {
+        return [a.style, a.weight, K() ? a.stretch : "", "100px", b].join(" ")
+    }
+
+    B.prototype.load = function (a, b) {
+        var c = this, k = a || "BESbswy", r = 0, n = b || 3E3, H = (new Date).getTime();
+        return new Promise(function (a, b) {
+            if (J() && !G()) {
+                var M = new Promise(function (a, b) {
+                    function e() {
+                        (new Date).getTime() - H >= n ? b(Error("" + n + "ms timeout exceeded")) : document.fonts.load(L(c, '"' + c.family + '"'), k).then(function (c) {
+                            1 <= c.length ? a() : setTimeout(e, 25)
+                        }, b)
+                    }
+
+                    e()
+                }), N = new Promise(function (a, c) {
+                    r = setTimeout(function () {
+                        c(Error("" + n + "ms timeout exceeded"))
+                    }, n)
+                });
+                Promise.race([N, M]).then(function () {
+                        clearTimeout(r);
+                        a(c)
+                    },
+                    b)
+            } else m(function () {
+                function v() {
+                    var b;
+                    if (b = -1 != f && -1 != g || -1 != f && -1 != h || -1 != g && -1 != h) (b = f != g && f != h && g != h) || (null === C && (b = /AppleWebKit\/([0-9]+)(?:\.([0-9]+))/.exec(window.navigator.userAgent), C = !!b && (536 > parseInt(b[1], 10) || 536 === parseInt(b[1], 10) && 11 >= parseInt(b[2], 10))), b = C && (f == w && g == w && h == w || f == x && g == x && h == x || f == y && g == y && h == y)), b = !b;
+                    b && (d.parentNode && d.parentNode.removeChild(d), clearTimeout(r), a(c))
+                }
+
+                function I() {
+                    if ((new Date).getTime() - H >= n) d.parentNode && d.parentNode.removeChild(d), b(Error("" +
+                        n + "ms timeout exceeded")); else {
+                        var a = document.hidden;
+                        if (!0 === a || void 0 === a) f = e.a.offsetWidth, g = p.a.offsetWidth, h = q.a.offsetWidth, v();
+                        r = setTimeout(I, 50)
+                    }
+                }
+
+                var e = new t(k), p = new t(k), q = new t(k), f = -1, g = -1, h = -1, w = -1, x = -1, y = -1,
+                    d = document.createElement("div");
+                d.dir = "ltr";
+                u(e, L(c, "sans-serif"));
+                u(p, L(c, "serif"));
+                u(q, L(c, "monospace"));
+                d.appendChild(e.a);
+                d.appendChild(p.a);
+                d.appendChild(q.a);
+                document.body.appendChild(d);
+                w = e.a.offsetWidth;
+                x = p.a.offsetWidth;
+                y = q.a.offsetWidth;
+                I();
+                A(e, function (a) {
+                    f = a;
+                    v()
+                });
+                u(e,
+                    L(c, '"' + c.family + '",sans-serif'));
+                A(p, function (a) {
+                    g = a;
+                    v()
+                });
+                u(p, L(c, '"' + c.family + '",serif'));
+                A(q, function (a) {
+                    h = a;
+                    v()
+                });
+                u(q, L(c, '"' + c.family + '",monospace'))
+            })
+        })
+    };
+    "object" === typeof module ? module.exports = B : (window.FontFaceObserver = B, window.FontFaceObserver.prototype.load = B.prototype.load)
+})();
+
+// Add this to the top of your script.js file
+// This will ensure fonts are loaded before displaying content
+
+(function () {
+    // FontFaceObserver library (minified version)
+    // Only include this if you're not using the library from the previous fix
+
+    document.addEventListener('DOMContentLoaded', function () {
+        // Create an observer for Material Icons font
+        const materialIconsObserver = new FontFaceObserver('Material Icons');
+
+        // Create an observer for Roboto font (main body font)
+        const robotoObserver = new FontFaceObserver('Roboto');
+
+        // Load both fonts with Promise.all
+        Promise.all([
+            materialIconsObserver.load(null, 3000), // 3 second timeout
+            robotoObserver.load(null, 3000)
+        ]).then(function () {
+            // Fonts have loaded successfully
+            document.body.classList.add('fonts-loaded');
+
+            // Add ready class to all Material Icons elements
+            document.querySelectorAll('.material-icons').forEach(function (icon) {
+                icon.classList.add('ready');
+            });
+
+            // Show the android animation
+            const androidAnimation = document.querySelector('.android-animation');
+            if (androidAnimation) {
+                androidAnimation.style.opacity = '1';
+            }
+
+            console.log('All fonts loaded successfully!');
+        }).catch(function (err) {
+            // Fonts failed to load, but we'll show the content anyway
+            document.body.classList.add('fonts-loaded');
+            console.error('Font loading error:', err);
+
+            // Force show all content after timeout
+            setTimeout(function () {
+                document.querySelectorAll('.material-icons').forEach(function (icon) {
+                    icon.style.opacity = '1';
+                });
+            }, 500);
+        });
+
+        // Fallback: Show content after 3 seconds regardless of font loading
+        setTimeout(function () {
+            if (!document.body.classList.contains('fonts-loaded')) {
+                document.body.classList.add('fonts-loaded');
+                console.warn('Font loading timeout - showing content anyway');
+            }
+        }, 3000);
+    });
+
+    // Handle icon fallback for situations where fonts fail to load
+    function createFallbackIcons() {
+        const materialIcons = {
+            'android': '🤖',
+            'phone_android': '📱',
+            'developer_mode': '💻',
+            'code': '{ }',
+            'email': '✉️',
+            'article': '📄',
+            'keyboard_arrow_down': '↓',
+            'tag': '#️⃣',
+            'business': '🏢',
+            'add': '+',
+            // Add more icons as needed
+        };
+
+        // Add fallback text to icon elements
+        document.querySelectorAll('.material-icons').forEach(function (icon) {
+            const iconName = icon.textContent.trim();
+            const fallbackText = materialIcons[iconName] || '•';
+
+            // Store fallback in data attribute
+            icon.dataset.fallback = fallbackText;
+
+            // Set up mutation observer to check if icon renders
+            const observer = new MutationObserver(function (mutations) {
+                mutations.forEach(function (mutation) {
+                    if (mutation.type === 'characterData') {
+                        // If the icon font hasn't loaded after 3 seconds, use the fallback
+                        setTimeout(function () {
+                            if (getComputedStyle(icon).fontFamily.indexOf('Material Icons') === -1) {
+                                icon.textContent = icon.dataset.fallback;
+                                icon.style.fontFamily = 'sans-serif';
+                                icon.style.opacity = '1';
+                            }
+                        }, 3000);
+                    }
+                });
+            });
+
+            // Observe the icon element
+            observer.observe(icon, {characterData: true, subtree: true});
+        });
+    }
+
+    // Run fallback function after a delay
+    setTimeout(createFallbackIcons, 2000);
+})();
+
 // Android animation mouse movement effect
 const androidAnimation = document.querySelector('.android-animation');
 const androidIcon = document.querySelector('.android-icon');
@@ -502,106 +827,112 @@ document.addEventListener('DOMContentLoaded', function () {
 });
 
 // Add this to your script.js file
-document.addEventListener('DOMContentLoaded', function() {
-  const skillChips = document.querySelectorAll('.skill-chip');
+document.addEventListener('DOMContentLoaded', function () {
+    const skillChips = document.querySelectorAll('.skill-chip');
 
-  // Set initial state - all invisible
-  skillChips.forEach(chip => {
-    chip.style.opacity = '0';
-    chip.style.transform = 'translateY(20px)';
-    chip.style.transition = 'opacity 0.3s ease, transform 0.3s ease';
-  });
-
-  // Function to check if element is in viewport
-  function isInViewport(element) {
-    const rect = element.getBoundingClientRect();
-    return (
-      rect.top <= (window.innerHeight || document.documentElement.clientHeight) &&
-      rect.bottom >= 0
-    );
-  }
-
-  // Function to animate skills when in viewport
-  function animateSkills() {
-    if (!isInViewport(document.querySelector('.skill-chips'))) return;
-
-    skillChips.forEach((chip, index) => {
-      setTimeout(() => {
-        chip.style.opacity = '1';
-        chip.style.transform = 'translateY(0)';
-      }, 50 * index); // Stagger each item by 50ms
+    // Set initial state - all invisible
+    skillChips.forEach(chip => {
+        chip.style.opacity = '0';
+        chip.style.transform = 'translateY(20px)';
+        chip.style.transition = 'opacity 0.3s ease, transform 0.3s ease';
     });
 
-    // Remove scroll listener once animation is triggered
-    window.removeEventListener('scroll', animateSkills);
-  }
+    // Function to check if element is in viewport
+    function isInViewport(element) {
+        const rect = element.getBoundingClientRect();
+        return (
+            rect.top <= (window.innerHeight || document.documentElement.clientHeight) &&
+            rect.bottom >= 0
+        );
+    }
 
-  // Check on initial load and then on scroll
-  animateSkills();
-  window.addEventListener('scroll', animateSkills);
+    // Function to animate skills when in viewport
+    function animateSkills() {
+        if (!isInViewport(document.querySelector('.skill-chips'))) return;
+
+        skillChips.forEach((chip, index) => {
+            setTimeout(() => {
+                chip.style.opacity = '1';
+                chip.style.transform = 'translateY(0)';
+            }, 50 * index); // Stagger each item by 50ms
+        });
+
+        // Remove scroll listener once animation is triggered
+        window.removeEventListener('scroll', animateSkills);
+    }
+
+    // Check on initial load and then on scroll
+    animateSkills();
+    window.addEventListener('scroll', animateSkills);
 });
 
 // Add this to your script.js file
-document.addEventListener('DOMContentLoaded', function() {
-  // Create the FAB container
-  const fabContainer = document.createElement('div');
-  fabContainer.classList.add('fab-container');
+document.addEventListener('DOMContentLoaded', function () {
+    // Create the FAB container
+    const fabContainer = document.createElement('div');
+    fabContainer.classList.add('fab-container');
 
-  // Create main FAB button
-  const mainFab = document.createElement('button');
-  mainFab.classList.add('fab-button', 'main-fab');
-  mainFab.innerHTML = '<span class="material-icons">add</span>';
+    // Create main FAB button
+    const mainFab = document.createElement('button');
+    mainFab.classList.add('fab-button', 'main-fab');
+    mainFab.innerHTML = '<span class="material-icons">add</span>';
 
-  // Create mini FABs
-  const miniFabs = [
-    {
-      icon: 'email',
-      label: 'Email Me',
-      action: () => { window.location.href = 'mailto:Miladv33@gmail.com'; }
-    },
-    {
-      icon: 'code',
-      label: 'View GitHub',
-      action: () => { window.open('https://github.com/miladv33', '_blank'); }
-    },
-    {
-      icon: 'article',
-      label: 'Read Articles',
-      action: () => { document.getElementById('articles').scrollIntoView({behavior: 'smooth'}); }
-    }
-  ];
+    // Create mini FABs
+    const miniFabs = [
+        {
+            icon: 'email',
+            label: 'Email Me',
+            action: () => {
+                window.location.href = 'mailto:Miladv33@gmail.com';
+            }
+        },
+        {
+            icon: 'code',
+            label: 'View GitHub',
+            action: () => {
+                window.open('https://github.com/miladv33', '_blank');
+            }
+        },
+        {
+            icon: 'article',
+            label: 'Read Articles',
+            action: () => {
+                document.getElementById('articles').scrollIntoView({behavior: 'smooth'});
+            }
+        }
+    ];
 
-  // Create a wrapper for mini FABs
-  const miniFabsWrapper = document.createElement('div');
-  miniFabsWrapper.classList.add('mini-fabs-wrapper');
+    // Create a wrapper for mini FABs
+    const miniFabsWrapper = document.createElement('div');
+    miniFabsWrapper.classList.add('mini-fabs-wrapper');
 
-  // Add mini FABs to wrapper
-  miniFabs.forEach(fab => {
-    const miniFab = document.createElement('button');
-    miniFab.classList.add('fab-button', 'mini-fab');
-    miniFab.innerHTML = `<span class="material-icons">${fab.icon}</span>`;
-    miniFab.setAttribute('data-label', fab.label);
-    miniFab.addEventListener('click', fab.action);
-    miniFabsWrapper.appendChild(miniFab);
-  });
+    // Add mini FABs to wrapper
+    miniFabs.forEach(fab => {
+        const miniFab = document.createElement('button');
+        miniFab.classList.add('fab-button', 'mini-fab');
+        miniFab.innerHTML = `<span class="material-icons">${fab.icon}</span>`;
+        miniFab.setAttribute('data-label', fab.label);
+        miniFab.addEventListener('click', fab.action);
+        miniFabsWrapper.appendChild(miniFab);
+    });
 
-  // Add components to DOM
-  fabContainer.appendChild(miniFabsWrapper);
-  fabContainer.appendChild(mainFab);
-  document.body.appendChild(fabContainer);
+    // Add components to DOM
+    fabContainer.appendChild(miniFabsWrapper);
+    fabContainer.appendChild(mainFab);
+    document.body.appendChild(fabContainer);
 
-  // Toggle FAB menu
-  mainFab.addEventListener('click', function() {
-    fabContainer.classList.toggle('active');
+    // Toggle FAB menu
+    mainFab.addEventListener('click', function () {
+        fabContainer.classList.toggle('active');
 
-    // Rotate main FAB button
-    this.style.transform = fabContainer.classList.contains('active')
-      ? 'rotate(45deg)'
-      : 'rotate(0)';
-  });
+        // Rotate main FAB button
+        this.style.transform = fabContainer.classList.contains('active')
+            ? 'rotate(45deg)'
+            : 'rotate(0)';
+    });
 
-  // Add styles
-  document.head.insertAdjacentHTML('beforeend', `
+    // Add styles
+    document.head.insertAdjacentHTML('beforeend', `
     <style>
       .fab-container {
         position: fixed;
@@ -696,94 +1027,94 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 
 // Add this to your script.js file
-document.addEventListener('DOMContentLoaded', function() {
-  const hero = document.querySelector('.hero');
-  const androidItems = document.querySelectorAll('.android-item, .code-particle');
-  const heroContent = document.querySelector('.hero-content');
+document.addEventListener('DOMContentLoaded', function () {
+    const hero = document.querySelector('.hero');
+    const androidItems = document.querySelectorAll('.android-item, .code-particle');
+    const heroContent = document.querySelector('.hero-content');
 
-  // Add perspective to hero
-  hero.style.perspective = '1000px';
-  hero.style.perspectiveOrigin = 'center';
+    // Add perspective to hero
+    hero.style.perspective = '1000px';
+    hero.style.perspectiveOrigin = 'center';
 
-  // Base transform for hero content
-  heroContent.style.transform = 'translateZ(0)';
-  heroContent.style.transition = 'transform 0.2s ease-out';
+    // Base transform for hero content
+    heroContent.style.transform = 'translateZ(0)';
+    heroContent.style.transition = 'transform 0.2s ease-out';
 
-  // Initial parallax depth for each item
-  androidItems.forEach(item => {
-    // Generate random depth
-    const depth = Math.random() * 200;
-    item.style.transform += ` translateZ(${-depth}px)`;
-    item.dataset.depth = depth;
-  });
-
-  // Handle scroll parallax
-  window.addEventListener('scroll', function() {
-    const scrollY = window.scrollY;
-    if (scrollY > hero.offsetHeight) return; // Stop when out of view
-
-    // Move hero content based on scroll
-    const contentMove = scrollY * 0.15;
-    heroContent.style.transform = `translateZ(0) translateY(${contentMove}px)`;
-
-    // Move each android item based on its depth
+    // Initial parallax depth for each item
     androidItems.forEach(item => {
-      const depth = parseFloat(item.dataset.depth);
-      const itemMove = scrollY * (depth / 1000);
-      const currentTransform = item.style.transform.split(' translateZ')[0];
-      item.style.transform = `${currentTransform} translateZ(${-depth}px) translateY(${itemMove}px)`;
+        // Generate random depth
+        const depth = Math.random() * 200;
+        item.style.transform += ` translateZ(${-depth}px)`;
+        item.dataset.depth = depth;
     });
-  });
+
+    // Handle scroll parallax
+    window.addEventListener('scroll', function () {
+        const scrollY = window.scrollY;
+        if (scrollY > hero.offsetHeight) return; // Stop when out of view
+
+        // Move hero content based on scroll
+        const contentMove = scrollY * 0.15;
+        heroContent.style.transform = `translateZ(0) translateY(${contentMove}px)`;
+
+        // Move each android item based on its depth
+        androidItems.forEach(item => {
+            const depth = parseFloat(item.dataset.depth);
+            const itemMove = scrollY * (depth / 1000);
+            const currentTransform = item.style.transform.split(' translateZ')[0];
+            item.style.transform = `${currentTransform} translateZ(${-depth}px) translateY(${itemMove}px)`;
+        });
+    });
 });
 
 // Add this to your script.js file
-document.addEventListener('DOMContentLoaded', function() {
-  const timelineItems = document.querySelectorAll('.timeline-item');
+document.addEventListener('DOMContentLoaded', function () {
+    const timelineItems = document.querySelectorAll('.timeline-item');
 
-  // Set initial state
-  timelineItems.forEach(item => {
-    const isLeft = !item.style.left || item.style.left === '0px';
-    const transform = isLeft ? 'translateX(-50px)' : 'translateX(50px)';
-
-    item.style.opacity = '0';
-    item.style.transform = transform;
-    item.style.transition = 'opacity 0.5s ease, transform 0.5s ease';
-  });
-
-  // Function to check if element is in viewport
-  function isInViewport(element) {
-    const rect = element.getBoundingClientRect();
-    const offset = 150; // Start animation a bit earlier
-    return (
-      rect.top <= (window.innerHeight - offset || document.documentElement.clientHeight - offset) &&
-      rect.bottom >= offset
-    );
-  }
-
-  // Function to animate timeline items
-  function animateTimeline() {
+    // Set initial state
     timelineItems.forEach(item => {
-      if (isInViewport(item) && item.style.opacity === '0') {
-        // Animate in
-        setTimeout(() => {
-          item.style.opacity = '1';
-          item.style.transform = 'translateX(0)';
+        const isLeft = !item.style.left || item.style.left === '0px';
+        const transform = isLeft ? 'translateX(-50px)' : 'translateX(50px)';
 
-          // Add highlight flash to the timeline dot
-          const dot = item.querySelector('.timeline-dot');
-          if (dot) {
-            dot.classList.add('timeline-dot-flash');
-            setTimeout(() => {
-              dot.classList.remove('timeline-dot-flash');
-            }, 1000);
-          }
-        }, 200 * Array.from(timelineItems).indexOf(item)); // Sequential delay
-      }
+        item.style.opacity = '0';
+        item.style.transform = transform;
+        item.style.transition = 'opacity 0.5s ease, transform 0.5s ease';
     });
-  }
 
-  // Add highlight effect style
-  document.head.insertAdjacentHTML('beforeend', `
+    // Function to check if element is in viewport
+    function isInViewport(element) {
+        const rect = element.getBoundingClientRect();
+        const offset = 150; // Start animation a bit earlier
+        return (
+            rect.top <= (window.innerHeight - offset || document.documentElement.clientHeight - offset) &&
+            rect.bottom >= offset
+        );
+    }
+
+    // Function to animate timeline items
+    function animateTimeline() {
+        timelineItems.forEach(item => {
+            if (isInViewport(item) && item.style.opacity === '0') {
+                // Animate in
+                setTimeout(() => {
+                    item.style.opacity = '1';
+                    item.style.transform = 'translateX(0)';
+
+                    // Add highlight flash to the timeline dot
+                    const dot = item.querySelector('.timeline-dot');
+                    if (dot) {
+                        dot.classList.add('timeline-dot-flash');
+                        setTimeout(() => {
+                            dot.classList.remove('timeline-dot-flash');
+                        }, 1000);
+                    }
+                }, 200 * Array.from(timelineItems).indexOf(item)); // Sequential delay
+            }
+        });
+    }
+
+    // Add highlight effect style
+    document.head.insertAdjacentHTML('beforeend', `
     <style>
       .timeline-dot-flash {
         animation: dot-flash 1s ease-out;
@@ -803,50 +1134,50 @@ document.addEventListener('DOMContentLoaded', function() {
     </style>
   `);
 
-  // Check on initial load
-  setTimeout(animateTimeline, 500);
+    // Check on initial load
+    setTimeout(animateTimeline, 500);
 
-  // Check on scroll
-  window.addEventListener('scroll', animateTimeline);
+    // Check on scroll
+    window.addEventListener('scroll', animateTimeline);
 });
 
 // Add this to your script.js file
-document.addEventListener('DOMContentLoaded', function() {
-  const projectCards = document.querySelectorAll('.project-card');
+document.addEventListener('DOMContentLoaded', function () {
+    const projectCards = document.querySelectorAll('.project-card');
 
-  projectCards.forEach(card => {
-    // Create gradient overlay for hover effect
-    const overlay = document.createElement('div');
-    overlay.classList.add('project-card-overlay');
-    card.appendChild(overlay);
+    projectCards.forEach(card => {
+        // Create gradient overlay for hover effect
+        const overlay = document.createElement('div');
+        overlay.classList.add('project-card-overlay');
+        card.appendChild(overlay);
 
-    // Add morph animation on hover
-    card.addEventListener('mouseenter', function() {
-      this.classList.add('project-card-hover');
+        // Add morph animation on hover
+        card.addEventListener('mouseenter', function () {
+            this.classList.add('project-card-hover');
 
-      // Animate project tech items
-      const techItems = this.querySelectorAll('.project-tech-item');
-      techItems.forEach((item, index) => {
-        item.style.transitionDelay = `${index * 50}ms`;
-        item.classList.add('project-tech-item-hover');
-      });
+            // Animate project tech items
+            const techItems = this.querySelectorAll('.project-tech-item');
+            techItems.forEach((item, index) => {
+                item.style.transitionDelay = `${index * 50}ms`;
+                item.classList.add('project-tech-item-hover');
+            });
+        });
+
+        card.addEventListener('mouseleave', function () {
+            this.classList.remove('project-card-hover');
+
+            // Reset tech items
+            const techItems = this.querySelectorAll('.project-tech-item');
+            techItems.forEach(item => {
+                item.classList.remove('project-tech-item-hover');
+                // Remove delay on leave to avoid staggered fade out
+                item.style.transitionDelay = '0ms';
+            });
+        });
     });
 
-    card.addEventListener('mouseleave', function() {
-      this.classList.remove('project-card-hover');
-
-      // Reset tech items
-      const techItems = this.querySelectorAll('.project-tech-item');
-      techItems.forEach(item => {
-        item.classList.remove('project-tech-item-hover');
-        // Remove delay on leave to avoid staggered fade out
-        item.style.transitionDelay = '0ms';
-      });
-    });
-  });
-
-  // Add necessary styles
-  document.head.insertAdjacentHTML('beforeend', `
+    // Add necessary styles
+    document.head.insertAdjacentHTML('beforeend', `
     <style>
       .project-card {
         position: relative;
@@ -902,82 +1233,82 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 
 // Add this to your script.js file
-document.addEventListener('DOMContentLoaded', function() {
-  // First, modify your HTML to add a typing container
-  const heroSubtitle = document.querySelector('.hero-subtitle');
+document.addEventListener('DOMContentLoaded', function () {
+    // First, modify your HTML to add a typing container
+    const heroSubtitle = document.querySelector('.hero-subtitle');
 
-  if (heroSubtitle) {
-    // Save original text
-    const originalText = heroSubtitle.innerHTML;
+    if (heroSubtitle) {
+        // Save original text
+        const originalText = heroSubtitle.innerHTML;
 
-    // Create typed text element
-    const typedTextEl = document.createElement('div');
-    typedTextEl.classList.add('typed-text');
+        // Create typed text element
+        const typedTextEl = document.createElement('div');
+        typedTextEl.classList.add('typed-text');
 
-    // Insert after the hero subtitle
-    heroSubtitle.insertAdjacentElement('afterend', typedTextEl);
+        // Insert after the hero subtitle
+        heroSubtitle.insertAdjacentElement('afterend', typedTextEl);
 
-    // Define typing text phrases
-    const phrases = [
-      "Building innovative Android apps",
-      "Specializing in Kotlin and MVVM",
-      "Implementing Clean Architecture",
-      "Creating seamless user experiences",
-      "Developing with Jetpack Compose"
-    ];
+        // Define typing text phrases
+        const phrases = [
+            "Building innovative Android apps",
+            "Specializing in Kotlin and MVVM",
+            "Implementing Clean Architecture",
+            "Creating seamless user experiences",
+            "Developing with Jetpack Compose"
+        ];
 
-    // Initialize variables
-    let phraseIndex = 0;
-    let charIndex = 0;
-    let isDeleting = false;
-    let isWaiting = false;
+        // Initialize variables
+        let phraseIndex = 0;
+        let charIndex = 0;
+        let isDeleting = false;
+        let isWaiting = false;
 
-    // Function to type text
-    function typeText() {
-      // Current phrase to work with
-      const currentPhrase = phrases[phraseIndex];
+        // Function to type text
+        function typeText() {
+            // Current phrase to work with
+            const currentPhrase = phrases[phraseIndex];
 
-      // Speed control based on state
-      const typingSpeed = isDeleting ? 30 : 80;
+            // Speed control based on state
+            const typingSpeed = isDeleting ? 30 : 80;
 
-      if (!isWaiting) {
-        // If typing
-        if (!isDeleting && charIndex <= currentPhrase.length) {
-          typedTextEl.innerHTML = `<span class="primary-text">${currentPhrase.substring(0, charIndex)}</span><span class="cursor">|</span>`;
-          charIndex++;
+            if (!isWaiting) {
+                // If typing
+                if (!isDeleting && charIndex <= currentPhrase.length) {
+                    typedTextEl.innerHTML = `<span class="primary-text">${currentPhrase.substring(0, charIndex)}</span><span class="cursor">|</span>`;
+                    charIndex++;
 
-          // Start deleting after full phrase is typed with a pause
-          if (charIndex > currentPhrase.length) {
-            isWaiting = true;
-            setTimeout(() => {
-              isWaiting = false;
-              isDeleting = true;
-            }, 1500);
-          }
+                    // Start deleting after full phrase is typed with a pause
+                    if (charIndex > currentPhrase.length) {
+                        isWaiting = true;
+                        setTimeout(() => {
+                            isWaiting = false;
+                            isDeleting = true;
+                        }, 1500);
+                    }
+                }
+                // If deleting
+                else if (isDeleting && charIndex >= 0) {
+                    typedTextEl.innerHTML = `<span class="primary-text">${currentPhrase.substring(0, charIndex)}</span><span class="cursor">|</span>`;
+                    charIndex--;
+
+                    // Move to next phrase after fully deleted
+                    if (charIndex === 0) {
+                        isDeleting = false;
+                        phraseIndex = (phraseIndex + 1) % phrases.length;
+                    }
+                }
+            }
+
+            // Call function again after delay
+            setTimeout(typeText, typingSpeed);
         }
-        // If deleting
-        else if (isDeleting && charIndex >= 0) {
-          typedTextEl.innerHTML = `<span class="primary-text">${currentPhrase.substring(0, charIndex)}</span><span class="cursor">|</span>`;
-          charIndex--;
 
-          // Move to next phrase after fully deleted
-          if (charIndex === 0) {
-            isDeleting = false;
-            phraseIndex = (phraseIndex + 1) % phrases.length;
-          }
-        }
-      }
-
-      // Call function again after delay
-      setTimeout(typeText, typingSpeed);
+        // Start the typing animation
+        typeText();
     }
 
-    // Start the typing animation
-    typeText();
-  }
-
-  // Add necessary styles
-  document.head.insertAdjacentHTML('beforeend', `
+    // Add necessary styles
+    document.head.insertAdjacentHTML('beforeend', `
     <style>
       .typed-text {
         min-height: 28px;
@@ -1005,42 +1336,42 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 
 // Add this to your script.js file
-document.addEventListener('DOMContentLoaded', function() {
-  // Create progress container
-  const progressContainer = document.createElement('div');
-  progressContainer.classList.add('scroll-progress-container');
+document.addEventListener('DOMContentLoaded', function () {
+    // Create progress container
+    const progressContainer = document.createElement('div');
+    progressContainer.classList.add('scroll-progress-container');
 
-  // Create progress bar
-  const progressBar = document.createElement('div');
-  progressBar.classList.add('scroll-progress-bar');
+    // Create progress bar
+    const progressBar = document.createElement('div');
+    progressBar.classList.add('scroll-progress-bar');
 
-  // Append to DOM
-  progressContainer.appendChild(progressBar);
-  document.body.appendChild(progressContainer);
+    // Append to DOM
+    progressContainer.appendChild(progressBar);
+    document.body.appendChild(progressContainer);
 
-  // Update progress on scroll
-  window.addEventListener('scroll', function() {
-    const windowHeight = document.documentElement.scrollHeight - document.documentElement.clientHeight;
-    const scrollPosition = window.scrollY;
-    const scrollPercentage = (scrollPosition / windowHeight) * 100;
+    // Update progress on scroll
+    window.addEventListener('scroll', function () {
+        const windowHeight = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+        const scrollPosition = window.scrollY;
+        const scrollPercentage = (scrollPosition / windowHeight) * 100;
 
-    progressBar.style.width = `${scrollPercentage}%`;
+        progressBar.style.width = `${scrollPercentage}%`;
 
-    // Add pulsing effect at milestones
-    if (scrollPercentage >= 25 && scrollPercentage < 26 ||
-        scrollPercentage >= 50 && scrollPercentage < 51 ||
-        scrollPercentage >= 75 && scrollPercentage < 76 ||
-        scrollPercentage >= 99 && scrollPercentage <= 100) {
-      progressBar.classList.add('progress-milestone');
+        // Add pulsing effect at milestones
+        if (scrollPercentage >= 25 && scrollPercentage < 26 ||
+            scrollPercentage >= 50 && scrollPercentage < 51 ||
+            scrollPercentage >= 75 && scrollPercentage < 76 ||
+            scrollPercentage >= 99 && scrollPercentage <= 100) {
+            progressBar.classList.add('progress-milestone');
 
-      setTimeout(() => {
-        progressBar.classList.remove('progress-milestone');
-      }, 1000);
-    }
-  });
+            setTimeout(() => {
+                progressBar.classList.remove('progress-milestone');
+            }, 1000);
+        }
+    });
 
-  // Add styles
-  document.head.insertAdjacentHTML('beforeend', `
+    // Add styles
+    document.head.insertAdjacentHTML('beforeend', `
     <style>
       .scroll-progress-container {
         position: fixed;
@@ -1078,211 +1409,211 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 
 // Add this to your script.js file
-document.addEventListener('DOMContentLoaded', function() {
-  const hero = document.querySelector('.hero');
+document.addEventListener('DOMContentLoaded', function () {
+    const hero = document.querySelector('.hero');
 
-  if (hero) {
-    // Create canvas for particles
-    const particleCanvas = document.createElement('canvas');
-    particleCanvas.classList.add('particle-canvas');
-    particleCanvas.style.position = 'absolute';
-    particleCanvas.style.top = '0';
-    particleCanvas.style.left = '0';
-    particleCanvas.style.width = '100%';
-    particleCanvas.style.height = '100%';
-    particleCanvas.style.pointerEvents = 'none';
-    particleCanvas.style.zIndex = '0';
+    if (hero) {
+        // Create canvas for particles
+        const particleCanvas = document.createElement('canvas');
+        particleCanvas.classList.add('particle-canvas');
+        particleCanvas.style.position = 'absolute';
+        particleCanvas.style.top = '0';
+        particleCanvas.style.left = '0';
+        particleCanvas.style.width = '100%';
+        particleCanvas.style.height = '100%';
+        particleCanvas.style.pointerEvents = 'none';
+        particleCanvas.style.zIndex = '0';
 
-    // Insert canvas as first child of hero
-    hero.style.position = 'relative';
-    hero.insertBefore(particleCanvas, hero.firstChild);
+        // Insert canvas as first child of hero
+        hero.style.position = 'relative';
+        hero.insertBefore(particleCanvas, hero.firstChild);
 
-    // Particle system
-    const ParticleNetwork = {
-      ctx: null,
-      canvas: null,
-      particles: [],
-      connections: [],
-      mouseX: null,
-      mouseY: null,
-      animationFrame: null,
+        // Particle system
+        const ParticleNetwork = {
+            ctx: null,
+            canvas: null,
+            particles: [],
+            connections: [],
+            mouseX: null,
+            mouseY: null,
+            animationFrame: null,
 
-      init: function() {
-        this.canvas = particleCanvas;
-        this.ctx = this.canvas.getContext('2d');
-        this.resizeCanvas();
-        this.createParticles();
-        this.animate();
-        this.bindEvents();
-      },
+            init: function () {
+                this.canvas = particleCanvas;
+                this.ctx = this.canvas.getContext('2d');
+                this.resizeCanvas();
+                this.createParticles();
+                this.animate();
+                this.bindEvents();
+            },
 
-      bindEvents: function() {
-        window.addEventListener('resize', this.resizeCanvas.bind(this));
-        document.addEventListener('mousemove', this.onMouseMove.bind(this));
-      },
+            bindEvents: function () {
+                window.addEventListener('resize', this.resizeCanvas.bind(this));
+                document.addEventListener('mousemove', this.onMouseMove.bind(this));
+            },
 
-      onMouseMove: function(e) {
-        const rect = this.canvas.getBoundingClientRect();
-        this.mouseX = e.clientX - rect.left;
-        this.mouseY = e.clientY - rect.top;
-      },
+            onMouseMove: function (e) {
+                const rect = this.canvas.getBoundingClientRect();
+                this.mouseX = e.clientX - rect.left;
+                this.mouseY = e.clientY - rect.top;
+            },
 
-      resizeCanvas: function() {
-        const rect = hero.getBoundingClientRect();
-        this.canvas.width = rect.width;
-        this.canvas.height = rect.height;
+            resizeCanvas: function () {
+                const rect = hero.getBoundingClientRect();
+                this.canvas.width = rect.width;
+                this.canvas.height = rect.height;
 
-        // Recreate particles when canvas resizes
-        if (this.particles.length > 0) {
-          this.particles = [];
-          this.createParticles();
-        }
-      },
+                // Recreate particles when canvas resizes
+                if (this.particles.length > 0) {
+                    this.particles = [];
+                    this.createParticles();
+                }
+            },
 
-      createParticles: function() {
-        const particleCount = Math.floor(this.canvas.width * this.canvas.height / 10000);
+            createParticles: function () {
+                const particleCount = Math.floor(this.canvas.width * this.canvas.height / 10000);
 
-        for (let i = 0; i < particleCount; i++) {
-          this.particles.push({
-            x: Math.random() * this.canvas.width,
-            y: Math.random() * this.canvas.height,
-            vx: Math.random() * 0.2 - 0.1,
-            vy: Math.random() * 0.2 - 0.1,
-            radius: Math.random() * 2 + 1,
-            color: this.getRandomColor()
-          });
-        }
-      },
+                for (let i = 0; i < particleCount; i++) {
+                    this.particles.push({
+                        x: Math.random() * this.canvas.width,
+                        y: Math.random() * this.canvas.height,
+                        vx: Math.random() * 0.2 - 0.1,
+                        vy: Math.random() * 0.2 - 0.1,
+                        radius: Math.random() * 2 + 1,
+                        color: this.getRandomColor()
+                    });
+                }
+            },
 
-      getRandomColor: function() {
-        const colors = [
-          'rgba(187, 134, 252, ',
-          'rgba(3, 218, 198, ',
-          'rgba(255, 255, 255, '
-        ];
-        const opacity = Math.random() * 0.5 + 0.1;
-        return colors[Math.floor(Math.random() * colors.length)] + opacity + ')';
-      },
+            getRandomColor: function () {
+                const colors = [
+                    'rgba(187, 134, 252, ',
+                    'rgba(3, 218, 198, ',
+                    'rgba(255, 255, 255, '
+                ];
+                const opacity = Math.random() * 0.5 + 0.1;
+                return colors[Math.floor(Math.random() * colors.length)] + opacity + ')';
+            },
 
-      animate: function() {
-        this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+            animate: function () {
+                this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
 
-        // Update and draw particles
-        this.updateParticles();
-        this.drawParticles();
+                // Update and draw particles
+                this.updateParticles();
+                this.drawParticles();
 
-        // Request next frame
-        this.animationFrame = requestAnimationFrame(this.animate.bind(this));
-      },
+                // Request next frame
+                this.animationFrame = requestAnimationFrame(this.animate.bind(this));
+            },
 
-      updateParticles: function() {
-        this.particles.forEach(particle => {
-          // Move particles
-          particle.x += particle.vx;
-          particle.y += particle.vy;
+            updateParticles: function () {
+                this.particles.forEach(particle => {
+                    // Move particles
+                    particle.x += particle.vx;
+                    particle.y += particle.vy;
 
-          // Bounce off edges
-          if (particle.x < 0 || particle.x > this.canvas.width) {
-            particle.vx = -particle.vx;
-          }
+                    // Bounce off edges
+                    if (particle.x < 0 || particle.x > this.canvas.width) {
+                        particle.vx = -particle.vx;
+                    }
 
-          if (particle.y < 0 || particle.y > this.canvas.height) {
-            particle.vy = -particle.vy;
-          }
+                    if (particle.y < 0 || particle.y > this.canvas.height) {
+                        particle.vy = -particle.vy;
+                    }
 
-          // Mouse interaction
-          if (this.mouseX && this.mouseY) {
-            const dx = this.mouseX - particle.x;
-            const dy = this.mouseY - particle.y;
-            const dist = Math.sqrt(dx * dx + dy * dy);
+                    // Mouse interaction
+                    if (this.mouseX && this.mouseY) {
+                        const dx = this.mouseX - particle.x;
+                        const dy = this.mouseY - particle.y;
+                        const dist = Math.sqrt(dx * dx + dy * dy);
 
-            // Repel particles from mouse
-            if (dist < 100) {
-              const angle = Math.atan2(dy, dx);
-              const force = (100 - dist) / 100;
+                        // Repel particles from mouse
+                        if (dist < 100) {
+                            const angle = Math.atan2(dy, dx);
+                            const force = (100 - dist) / 100;
 
-              particle.vx -= Math.cos(angle) * force * 0.02;
-              particle.vy -= Math.sin(angle) * force * 0.02;
+                            particle.vx -= Math.cos(angle) * force * 0.02;
+                            particle.vy -= Math.sin(angle) * force * 0.02;
+                        }
+                    }
+                });
+            },
+
+            drawParticles: function () {
+                const ctx = this.ctx;
+
+                // Draw particles
+                this.particles.forEach(particle => {
+                    ctx.beginPath();
+                    ctx.arc(particle.x, particle.y, particle.radius, 0, Math.PI * 2);
+                    ctx.fillStyle = particle.color;
+                    ctx.fill();
+                });
+
+                // Draw connections
+                this.particles.forEach((particle, i) => {
+                    for (let j = i + 1; j < this.particles.length; j++) {
+                        const p2 = this.particles[j];
+                        const dx = particle.x - p2.x;
+                        const dy = particle.y - p2.y;
+                        const dist = Math.sqrt(dx * dx + dy * dy);
+
+                        // Only connect particles within a certain distance
+                        if (dist < 100) {
+                            ctx.beginPath();
+                            ctx.moveTo(particle.x, particle.y);
+                            ctx.lineTo(p2.x, p2.y);
+
+                            // Opacity based on distance
+                            const opacity = 1 - dist / 100;
+                            ctx.strokeStyle = `rgba(187, 134, 252, ${opacity * 0.2})`;
+                            ctx.lineWidth = 1;
+                            ctx.stroke();
+                        }
+                    }
+                });
             }
-          }
-        });
-      },
+        };
 
-      drawParticles: function() {
-        const ctx = this.ctx;
-
-        // Draw particles
-        this.particles.forEach(particle => {
-          ctx.beginPath();
-          ctx.arc(particle.x, particle.y, particle.radius, 0, Math.PI * 2);
-          ctx.fillStyle = particle.color;
-          ctx.fill();
-        });
-
-        // Draw connections
-        this.particles.forEach((particle, i) => {
-          for (let j = i + 1; j < this.particles.length; j++) {
-            const p2 = this.particles[j];
-            const dx = particle.x - p2.x;
-            const dy = particle.y - p2.y;
-            const dist = Math.sqrt(dx * dx + dy * dy);
-
-            // Only connect particles within a certain distance
-            if (dist < 100) {
-              ctx.beginPath();
-              ctx.moveTo(particle.x, particle.y);
-              ctx.lineTo(p2.x, p2.y);
-
-              // Opacity based on distance
-              const opacity = 1 - dist / 100;
-              ctx.strokeStyle = `rgba(187, 134, 252, ${opacity * 0.2})`;
-              ctx.lineWidth = 1;
-              ctx.stroke();
-            }
-          }
-        });
-      }
-    };
-
-    // Initialize the particle network
-    ParticleNetwork.init();
-  }
+        // Initialize the particle network
+        ParticleNetwork.init();
+    }
 });
 
 // Add this to your script.js file
-document.addEventListener('DOMContentLoaded', function() {
-  const cards = document.querySelectorAll('.md-card, .project-card, .contact-card');
+document.addEventListener('DOMContentLoaded', function () {
+    const cards = document.querySelectorAll('.md-card, .project-card, .contact-card');
 
-  // Set initial state
-  cards.forEach(card => {
-    card.style.opacity = '0';
-    card.style.transform = 'translateY(20px)';
-    card.style.transition = 'opacity 0.4s ease, transform 0.4s ease';
-  });
-
-  // Function to check if element is in viewport with offset
-  function isInViewport(element, offset = 0) {
-    const rect = element.getBoundingClientRect();
-    return (
-      rect.top <= (window.innerHeight - offset) &&
-      rect.bottom >= offset
-    );
-  }
-
-  // Function to animate elements when they come into view
-  function animateOnScroll() {
-    cards.forEach((card, index) => {
-      if (isInViewport(card, 50) && card.style.opacity === '0') {
-        // Stagger animation based on index
-        setTimeout(() => {
-          card.style.opacity = '1';
-          card.style.transform = 'translateY(0)';
-        }, 100 * (index % 3)); // Stagger by row
-      }
+    // Set initial state
+    cards.forEach(card => {
+        card.style.opacity = '0';
+        card.style.transform = 'translateY(20px)';
+        card.style.transition = 'opacity 0.4s ease, transform 0.4s ease';
     });
-  }
 
-  // Run on load and scroll
-  animateOnScroll();
-  window.addEventListener('scroll', animateOnScroll);
+    // Function to check if element is in viewport with offset
+    function isInViewport(element, offset = 0) {
+        const rect = element.getBoundingClientRect();
+        return (
+            rect.top <= (window.innerHeight - offset) &&
+            rect.bottom >= offset
+        );
+    }
+
+    // Function to animate elements when they come into view
+    function animateOnScroll() {
+        cards.forEach((card, index) => {
+            if (isInViewport(card, 50) && card.style.opacity === '0') {
+                // Stagger animation based on index
+                setTimeout(() => {
+                    card.style.opacity = '1';
+                    card.style.transform = 'translateY(0)';
+                }, 100 * (index % 3)); // Stagger by row
+            }
+        });
+    }
+
+    // Run on load and scroll
+    animateOnScroll();
+    window.addEventListener('scroll', animateOnScroll);
 });

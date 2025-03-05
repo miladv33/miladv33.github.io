@@ -1165,3 +1165,97 @@ header:not([style*="translateY(-100%)"])::after {
 .project-description:hover strong {
     text-shadow: 0 0 1px rgba(187, 134, 252, 0.3);
 }
+
+/* Add this to your styles.css file */
+
+/* Ensure Material Icons font is loaded properly */
+/* This helps prevent FOUT (Flash of Unstyled Text) */
+.material-icons {
+  font-family: 'Material Icons';
+  font-weight: normal;
+  font-style: normal;
+  font-size: 24px;  /* Preferred icon size */
+  display: inline-block;
+  line-height: 1;
+  text-transform: none;
+  letter-spacing: normal;
+  word-wrap: normal;
+  white-space: nowrap;
+  direction: ltr;
+
+  /* Support for all WebKit browsers. */
+  -webkit-font-smoothing: antialiased;
+
+  /* Support for Safari and Chrome. */
+  text-rendering: optimizeLegibility;
+
+  /* Support for Firefox. */
+  -moz-osx-font-smoothing: grayscale;
+
+  /* Support for IE. */
+  font-feature-settings: 'liga';
+
+  /* Additional fix for better icon rendering */
+  will-change: opacity;
+
+  /* Hide text content until font loads */
+  color: transparent;
+  text-shadow: none;
+  transition: color 0.3s ease;
+}
+
+/* Class that will be applied once font is loaded */
+.material-icons.ready {
+  color: inherit; /* Revert to parent element's color */
+}
+
+/* Style for the font preloader element */
+.icon-preloader {
+  position: absolute;
+  top: -9999px;
+  left: -9999px;
+  visibility: hidden;
+}
+
+/* Better loading experience with a pulsing animation */
+@keyframes icon-pulse {
+  0% {
+    opacity: 0.3;
+  }
+  50% {
+    opacity: 0.7;
+  }
+  100% {
+    opacity: 0.3;
+  }
+}
+
+/* Apply animation to icons while loading */
+.material-icons:not(.ready) {
+  animation: icon-pulse 1.5s infinite;
+}
+
+/* Ensure Android animation works properly while loading */
+.android-animation {
+  min-height: 300px; /* Set minimum height to prevent layout shifts */
+}
+
+/* Ensure the placeholder for icons is properly sized */
+.android-item, .code-particle {
+  min-width: 24px;
+  min-height: 24px;
+  opacity: 0; /* Initially hidden */
+  animation: fadeIn 0.3s forwards;
+  animation-delay: 0.2s; /* Slight delay to ensure font is loaded */
+}
+
+/* Add this fade-in animation for smooth appearance */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 0.5; /* Match the original opacity */
+  }
+}
+

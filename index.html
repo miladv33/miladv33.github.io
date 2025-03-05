@@ -1,11 +1,95 @@
 <!DOCTYPE html>
 <html lang="en">
+<!-- Replace the <head> section in your HTML with this improved version -->
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Milad Varvaei - Android Developer</title>
+
+    <!-- Preload critical fonts to improve loading time -->
+    <link rel="preload" href="https://fonts.googleapis.com/icon?family=Material+Icons" as="style">
+    <link rel="preload" href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" as="style">
+
+    <!-- Load the preloaded fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+
+    <!-- Inline critical CSS to prevent icon flash -->
+    <style>
+        /* Critical Material Icons CSS */
+        .material-icons {
+            font-family: 'Material Icons';
+            font-weight: normal;
+            font-style: normal;
+            font-size: 24px;
+            display: inline-block;
+            line-height: 1;
+            text-transform: none;
+            letter-spacing: normal;
+            word-wrap: normal;
+            white-space: nowrap;
+            direction: ltr;
+            -webkit-font-smoothing: antialiased;
+            text-rendering: optimizeLegibility;
+            -moz-osx-font-smoothing: grayscale;
+            font-feature-settings: 'liga';
+
+            /* Hide text until font loads */
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        /* Font loading placeholder for smoother experience */
+        .icon-loading-placeholder {
+            display: inline-block;
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            background-color: rgba(187, 134, 252, 0.2);
+            animation: pulse 1.5s infinite ease-in-out;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(0.8); opacity: 0.3; }
+            50% { transform: scale(1); opacity: 0.5; }
+            100% { transform: scale(0.8); opacity: 0.3; }
+        }
+
+        /* Hide content initially to prevent FOUC */
+        .android-animation {
+            opacity: 0;
+            transition: opacity 0.5s ease;
+        }
+
+        /* Create a loading overlay */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: #121212;
+            z-index: 9999;
+            transition: opacity 0.5s ease, visibility 0.5s ease;
+        }
+
+        /* Body class that will be added once fonts are loaded */
+        body.fonts-loaded::before {
+            opacity: 0;
+            visibility: hidden;
+        }
+
+        body.fonts-loaded .android-animation {
+            opacity: 1;
+        }
+
+        body.fonts-loaded .material-icons {
+            opacity: 1;
+        }
+    </style>
+
+    <!-- Main stylesheet -->
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
