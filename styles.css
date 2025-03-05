@@ -1258,4 +1258,73 @@ header:not([style*="translateY(-100%)"])::after {
     opacity: 0.5; /* Match the original opacity */
   }
 }
+/* Add this to your styles.css file to specifically fix floating action button icons */
 
+/* Ensure FAB icons are always visible */
+.fab-button .material-icons {
+  color: var(--md-on-primary) !important; /* Override the transparent color */
+  opacity: 1 !important;           /* Override the opacity */
+  animation: none !important;      /* Disable any animations */
+  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important; /* Only keep transform transition */
+  text-shadow: none !important;    /* Remove any text shadow */
+}
+
+/* Main FAB specific */
+.main-fab .material-icons {
+  font-size: 24px;
+  font-family: 'Material Icons', sans-serif !important; /* Ensure correct font */
+  transition: transform 0.3s ease-out !important;       /* Only animation we want */
+}
+
+/* Ensure proper styling for the FAB container */
+.fab-container {
+  opacity: 1 !important;           /* Make sure it's visible */
+  visibility: visible !important;  /* Ensure it's not hidden */
+  pointer-events: auto !important; /* Make sure it's clickable */
+}
+
+/* Mini FAB icons */
+.mini-fab .material-icons {
+  color: var(--md-on-secondary) !important; /* Use correct color */
+  font-size: 24px;
+}
+
+/* Add this to your existing FAB container styles to ensure proper z-index */
+.fab-container {
+  position: fixed;
+  bottom: 30px;
+  right: 30px;
+  z-index: 9999 !important; /* Ensure it's above any loading overlay */
+}
+
+/* Emergency fallback - in case the icon font fails to load */
+.main-fab .material-icons:not(.loaded)::after {
+  content: '+';               /* Fallback plus symbol */
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: sans-serif;    /* Fallback font */
+  font-size: 28px;            /* Slightly larger */
+  opacity: 0;                 /* Start invisible */
+  transition: opacity 0.3s;   /* Fade in if needed */
+}
+
+/* Show fallback if icon doesn't appear after 3 seconds */
+.main-fab:has(.material-icons:not(.loaded)) .material-icons::after {
+  opacity: 1;
+}
+
+/* Force visibility of FAB on mobile */
+@media screen and (max-width: 768px) {
+  .fab-container,
+  .fab-button,
+  .fab-button .material-icons {
+    opacity: 1 !important;
+    visibility: visible !important;
+  }
+}

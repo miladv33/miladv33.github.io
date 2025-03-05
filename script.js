@@ -1,5 +1,172 @@
 // Add this to the top of your script.js file to ensure Material Icons are properly loaded
+// Add this function to your script.js file to specifically fix the FAB plus icon
 
+document.addEventListener('DOMContentLoaded', function() {
+  // Function to fix the Floating Action Button specifically
+  function fixFabIcons() {
+    // Target the main FAB button specifically
+    const mainFabIcon = document.querySelector('.main-fab .material-icons');
+
+    if (mainFabIcon) {
+      // Make sure the plus icon is visible immediately
+      mainFabIcon.style.opacity = '1';
+      mainFabIcon.style.color = 'inherit';
+
+      // Ensure the text content is correct
+      if (mainFabIcon.textContent.trim() === 'add') {
+        // Make sure it's visible
+        mainFabIcon.parentElement.style.opacity = '1';
+        mainFabIcon.classList.add('ready');
+      }
+    }
+
+    // Also fix all mini-fab icons
+    document.querySelectorAll('.mini-fab .material-icons').forEach(function(icon) {
+      icon.style.opacity = '1';
+      icon.style.color = 'inherit';
+      icon.classList.add('ready');
+    });
+  }
+
+  // Run immediately
+  fixFabIcons();
+
+  // And also run again after a short delay to ensure it catches dynamically created FABs
+  setTimeout(fixFabIcons, 500);
+
+  // And again after fonts should definitely be loaded
+  setTimeout(fixFabIcons, 2000);
+
+  // Monitor for the FAB creation if it's added dynamically
+  const observer = new MutationObserver(function(mutations) {
+    mutations.forEach(function(mutation) {
+      if (mutation.addedNodes.length) {
+        // Check if any of the added nodes contain our FAB
+        for (let i = 0; i < mutation.addedNodes.length; i++) {
+          const node = mutation.addedNodes[i];
+          if (node.nodeType === 1 && (
+            node.classList.contains('fab-container') ||
+            node.querySelector('.fab-container')
+          )) {
+            fixFabIcons();
+            break;
+          }
+        }
+      }
+    });
+  });
+
+  // Observe the body for changes
+  observer.observe(document.body, {
+    childList: true,
+    subtree: true
+  });
+
+  // Special case for dynamically created FAB in your code
+  const fabScript = document.querySelector('script:not([src])');
+  if (fabScript && fabScript.textContent.includes('fab-container')) {
+    // This means the FAB is probably created via script, so we need additional monitoring
+    const checkForFab = setInterval(function() {
+      const fab = document.querySelector('.main-fab');
+      if (fab) {
+        clearInterval(checkForFab);
+        fixFabIcons();
+      }
+    }, 100); // Check every 100ms
+
+    // Clear the interval after 10 seconds to avoid infinite checking
+    setTimeout(function() {
+      clearInterval(checkForFab);
+    }, 10000);
+  }
+});
+
+// Modified FAB creation script that ensures icons are always visible
+// Replace your existing FAB creation code in script.js with this version
+
+document.addEventListener('DOMContentLoaded', function() {
+  // Create the FAB container
+  const fabContainer = document.createElement('div');
+  fabContainer.classList.add('fab-container');
+
+  // Create main FAB button with icon that's guaranteed to be visible
+  const mainFab = document.createElement('button');
+  mainFab.classList.add('fab-button', 'main-fab');
+
+  // Create the icon with explicit styling to ensure visibility
+  const mainFabIcon = document.createElement('span');
+  mainFabIcon.classList.add('material-icons', 'icon-visible');
+  mainFabIcon.textContent = 'add';
+  mainFabIcon.style.opacity = '1';
+  mainFabIcon.style.color = 'var(--md-on-primary)';
+
+  // Add icon to button
+  mainFab.appendChild(mainFabIcon);
+
+  // Create mini FABs
+  const miniFabs = [
+    {
+      icon: 'email',
+      label: 'Email Me',
+      action: () => { window.location.href = 'mailto:Miladv33@gmail.com'; }
+    },
+    {
+      icon: 'code',
+      label: 'View GitHub',
+      action: () => { window.open('https://github.com/miladv33', '_blank'); }
+    },
+    {
+      icon: 'article',
+      label: 'Read Articles',
+      action: () => { document.getElementById('articles').scrollIntoView({behavior: 'smooth'}); }
+    }
+  ];
+
+  // Create a wrapper for mini FABs
+  const miniFabsWrapper = document.createElement('div');
+  miniFabsWrapper.classList.add('mini-fabs-wrapper');
+
+  // Add mini FABs to wrapper
+  miniFabs.forEach(fab => {
+    const miniFab = document.createElement('button');
+    miniFab.classList.add('fab-button', 'mini-fab');
+
+    // Create icon with guaranteed visibility
+    const miniFabIcon = document.createElement('span');
+    miniFabIcon.classList.add('material-icons', 'icon-visible');
+    miniFabIcon.textContent = fab.icon;
+    miniFabIcon.style.opacity = '1';
+    miniFabIcon.style.color = 'var(--md-on-secondary)';
+
+    miniFab.appendChild(miniFabIcon);
+    miniFab.setAttribute('data-label', fab.label);
+    miniFab.addEventListener('click', fab.action);
+    miniFabsWrapper.appendChild(miniFab);
+  });
+
+  // Add components to DOM
+  fabContainer.appendChild(miniFabsWrapper);
+  fabContainer.appendChild(mainFab);
+  document.body.appendChild(fabContainer);
+
+  // Toggle FAB menu
+  mainFab.addEventListener('click', function() {
+    fabContainer.classList.toggle('active');
+
+    // Rotate main FAB button
+    this.style.transform = fabContainer.classList.contains('active')
+      ? 'rotate(45deg)'
+      : 'rotate(0)';
+  });
+
+  // Add additional class to mark these icons as manually handled
+  document.querySelectorAll('.icon-visible').forEach(icon => {
+    icon.classList.add('ready');
+  });
+
+  // Add a special class to the FAB container so our CSS can target it specifically
+  fabContainer.classList.add('font-fix-exclude');
+});
 document.addEventListener('DOMContentLoaded', function () {
     // Create a hidden div to preload Material Icons font
     const preloadDiv = document.createElement('div');
